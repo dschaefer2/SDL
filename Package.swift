@@ -13,13 +13,11 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "SDL",
-            path: "src/swift/SDL",
+            name: "CSDL",
+            path: "src/swift/CSDL",
+            publicHeadersPath: ".",
             cSettings: [
                 .publicHeaderPath("../../../include"),
-            ],
-            swiftSettings: [
-                .bridgingHeader("SDL3.h", visibility: .public),
             ],
             linkerSettings: [
                 .linkedLibrary("SDL3"),
@@ -40,6 +38,15 @@ let package = Package(
                 .linkedFramework("CoreHaptics", .when(platforms: [.macOS]))
             ],
             plugins: ["SDLGeneratorPlugin"],
+        ),
+        .target(
+            name: "SDL",
+            dependencies: ["CSDL"],
+            path: "src/swift/SDL",
+            cSettings: [
+                // TODO: this shouldn't be necessary but is for now
+                .headerSearchPath("../../../include"),
+            ]
         ),
         .plugin(
             name: "CMakeBuilder",
