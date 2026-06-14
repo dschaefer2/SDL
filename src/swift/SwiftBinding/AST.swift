@@ -1,5 +1,5 @@
 import Foundation
-import TSCBasic
+import Subprocess
 
 public class ASTNode: Decodable {
     var kind: String?
@@ -13,9 +13,9 @@ public class ASTNode: Decodable {
     }
 }
 
-public func loadAST(headerPaths: [URL], headerFile: URL) throws -> ASTNode{
+public func loadAST(headerPaths: [URL], headerFile: URL) async throws -> ASTNode {
     var clangArgs: [String] = [
-        "clang", "-Xclang", "-ast-dump=json", "-fsyntax-only",
+        "-Xclang", "-ast-dump=json", "-fsyntax-only",
         "-I", headerFile.deletingLastPathComponent().path
     ]
 
@@ -23,9 +23,7 @@ public func loadAST(headerPaths: [URL], headerFile: URL) throws -> ASTNode{
         clangArgs += ["-I", headerPath.path]
     }
     clangArgs += [headerFile.path]
-    
-    let clang = TSCBasic.Process(arguments: clangArgs, outputRedirection: .collect(redirectStderr: true))
-    try clang.launch()
-    let clangOutput = try Data(clang.waitUntilExit().output.get())
+
+    let clangOutput = try await run(.name("clang"), arguments: .init(clangArgs), output: .data(limit: .max)).standardOutput
     return try JSONDecoder().decode(ASTNode.self, from: clangOutput)
 }

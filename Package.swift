@@ -12,7 +12,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-tools-support-core.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-subprocess", from: "0.5.0"),
         .package(url: "https://github.com/swiftlang/swift-syntax", from: "603.0.1"),
     ],
     targets: [
@@ -61,7 +61,7 @@ let package = Package(
         .target(
             name: "SwiftBinding",
             dependencies: [
-                .product(name: "TSCBasic", package: "swift-tools-support-core"),
+                .product(name: "Subprocess", package: "swift-subprocess"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftParser", package: "swift-syntax"),
             ],

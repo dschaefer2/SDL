@@ -1,12 +1,12 @@
 import Foundation
-import TSCBasic
+import Subprocess
 import SwiftSyntax
 import SwiftParser
 
-public func parseInterface(headerPaths: [URL], moduleDir: URL, moduleName: String) throws -> SourceFileSyntax {
-    let findSDK = TSCBasic.Process(args: "xcrun", "--show-sdk-path")
-    try findSDK.launch()
-    let sdkPath = try findSDK.waitUntilExit().utf8Output().trimmingCharacters(in: .newlines)
+public func parseInterface(headerPaths: [URL], moduleDir: URL, moduleName: String) async throws -> SourceFileSyntax {
+    guard let sdkPath = try await run(.name("xcrun"), arguments: ["--show-sdk-path"], output: .string(limit: .max))
+        .standardOutput?.trimmingCharacters(in: .newlines)
+    else { fatalError() }
     
     var synthArgs: [String] = [
         "xcrun", "swift-synthesize-interface",
@@ -20,9 +20,8 @@ public func parseInterface(headerPaths: [URL], moduleDir: URL, moduleName: Strin
         synthArgs += ["-I", headerPath.path]
     }
 
-    let synth = TSCBasic.Process(arguments: synthArgs, outputRedirection: .collect(redirectStderr: true))
-    try synth.launch()
-    let interface = try synth.waitUntilExit().utf8Output()
+    guard let interface = try await run(.name("xcrun"), arguments: .init(synthArgs), output: .string(limit: .max)).standardOutput
+    else { fatalError() }
 
     return Parser.parse(source: interface)
 }
