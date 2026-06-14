@@ -11,6 +11,10 @@ let package = Package(
             targets: ["SDL"]
         ),
     ],
+    dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-tools-support-core.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-syntax", from: "603.0.1"),
+    ],
     targets: [
         .target(
             name: "CSDL",
@@ -54,8 +58,23 @@ let package = Package(
             capability: .externalBuilder,
             path: "src/swift/CMakeBuilder"
         ),
+        .target(
+            name: "SwiftBinding",
+            dependencies: [
+                .product(name: "TSCBasic", package: "swift-tools-support-core"),
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftParser", package: "swift-syntax"),
+            ],
+            path: "src/swift/SwiftBinding"
+        ),
+        .target(
+            name: "SDLGenerator",
+            dependencies: ["SwiftBinding"],
+            path: "src/swift/SDLGenerator"
+        ),
         .executableTarget(
             name: "SDLAPIGenerator",
+            dependencies: ["SDLGenerator"],
             path: "src/swift/SDLAPIGenerator"
         ),
         .plugin(
