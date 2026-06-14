@@ -14,8 +14,9 @@ let package = Package(
     targets: [
         .target(
             name: "SDL",
+            path: "src/swift/SDL",
             cSettings: [
-                .publicHeaderPath("../../include"),
+                .publicHeaderPath("../../../include"),
             ],
             swiftSettings: [
                 .bridgingHeader("SDL3.h", visibility: .public),
@@ -40,11 +41,20 @@ let package = Package(
             ],
             plugins: ["SDLGeneratorPlugin"],
         ),
-        .plugin(name: "CMakeBuilder", capability: .externalBuilder),
-        .plugin(name: "SDLGeneratorPlugin", capability: .buildTool),
+        .plugin(
+            name: "CMakeBuilder",
+            capability: .externalBuilder,
+            path: "src/swift/CMakeBuilder"
+        ),
+        .plugin(
+            name: "SDLGeneratorPlugin",
+            capability: .buildTool,
+            path: "src/swift/SDLGeneratorPlugin"
+        ),
         .testTarget(
             name: "SDLTests",
             dependencies: ["SDL"],
+            path: "test/swift/SDLTests"
         ),
     ],
     plugins: [
