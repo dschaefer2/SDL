@@ -1,4 +1,4 @@
-// swift-tools-version: 6.4
+// swift-tools-version: 6.5
 
 import PackageDescription
 
@@ -37,7 +37,7 @@ let package = Package(
                 .linkedFramework("QuartzCore", .when(platforms: [.macOS])),
                 .linkedFramework("CoreHaptics", .when(platforms: [.macOS]))
             ],
-            plugins: ["SDLGeneratorPlugin"],
+            plugins: ["SDLAPIGenPlugin"],
         ),
         .target(
             name: "SDL",
@@ -46,17 +46,33 @@ let package = Package(
             cSettings: [
                 // TODO: this shouldn't be necessary but is for now
                 .headerSearchPath("../../../include"),
-            ]
+            ],
+            plugins: ["SwiftSDLGenPlugin"]
         ),
         .plugin(
             name: "CMakeBuilder",
             capability: .externalBuilder,
             path: "src/swift/CMakeBuilder"
         ),
+        .executableTarget(
+            name: "SDLAPIGenerator",
+            path: "src/swift/SDLAPIGenerator"
+        ),
         .plugin(
-            name: "SDLGeneratorPlugin",
+            name: "SDLAPIGenPlugin",
             capability: .buildTool,
-            path: "src/swift/SDLGeneratorPlugin"
+            dependencies: ["SDLAPIGenerator"],
+            path: "src/swift/SDLAPIGenPlugin"
+        ),
+        .executableTarget(
+            name: "SwiftSDLGenerator",
+            path: "src/swift/SwiftSDLGenerator"
+        ),
+        .plugin(
+            name: "SwiftSDLGenPlugin",
+            capability: .buildTool,
+            dependencies: ["SwiftSDLGenerator"],
+            path: "src/swift/SwiftSDLGenPlugin"
         ),
         .testTarget(
             name: "SDLTests",
