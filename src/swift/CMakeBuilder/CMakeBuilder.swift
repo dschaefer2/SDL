@@ -25,7 +25,8 @@ struct CMakeBuilder: ExternalBuilderPlugin {
 
         _ = try run(title: "cmake build", command: [
             "cmake",
-            "--build", context.pluginWorkDirectoryURL.path
+            "--build", context.pluginWorkDirectoryURL.path,
+            "--target", "SDL3-static"
         ])
     }
 

@@ -7,7 +7,7 @@ struct SDLAPIGenPlugin: BuildToolPlugin {
         target: Target
     ) async throws -> [Command] {
         let generator = try context.tool(named: "SDLAPIGenerator")
-        let include = context.pluginWorkDirectoryURL.appending(path: "include")
+        let include = context.pluginWorkDirectoryURL
         let moduleMap = include.appending(path: "module.moduleMap")
         let headerFile = include.appending(path: "SDL3.h")
 
@@ -21,4 +21,3 @@ struct SDLAPIGenPlugin: BuildToolPlugin {
         ]
     }
 }
-

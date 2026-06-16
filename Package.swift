@@ -22,6 +22,7 @@ let package = Package(
             publicHeadersPath: ".",
             cSettings: [
                 .publicHeaderPath("../../../include"),
+                .publicHeaderPath(plugin: "SDLAPIGenPlugin", path: "."),
             ],
             linkerSettings: [
                 .linkedLibrary("SDL3"),
