@@ -25,6 +25,7 @@ let package = Package(
                 .publicHeaderPath(plugin: "SDLAPIGenPlugin", path: "."),
             ],
             linkerSettings: [
+                .libraryPath(plugin: "CMakeBuilder", path: "."),
                 .linkedLibrary("SDL3"),
                 .linkedFramework("CoreMedia", .when(platforms: [.macOS])),
                 .linkedFramework("CoreVideo", .when(platforms: [.macOS])),
